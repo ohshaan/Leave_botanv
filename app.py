@@ -17,7 +17,12 @@ logger = logging.getLogger(__name__)
 logger.info("Starting Streamlit ERP Leave Application Chatbot...")
 
 # -------- CONFIGURATION (Credentials Hard-Coded) --------
-OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
+import streamlit as st
+import openai
+
+OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]  # ← NO comma!
+openai.api_key = OPENAI_API_KEY
+client = openai.OpenAI(api_key=OPENAI_API_KEY)
 ERP_BEARER_TOKEN = ""
 EMP_API_URL = "http://117.247.187.131:8085/api/EmployeeMasterApi/HrmGetEmployeeDetails/"
 LEAVE_API_URL = "http://117.247.187.131:8085/api/LeaveApplicationApi"
