@@ -1,0 +1,52 @@
+In this form user can enter the details of leave applied by employees. The previous leaves taken by an employee can also be seen from this form.
+
+
+How to add Leave Application details?
+1. Go to AdlER i application.
+2. Select HRMS from module selection Menu at the bottom of the page.
+3. From left side panel, select the menu TRANSACTION.
+4. From the menu select Leave Application button.
+5. Enter the appropriate information in the respective fields and click the Submit button.
+6. After the Submit button is clicked, a confirmation Popup screen will show the message 'Do you really want to save this record(s)?'. Click Yes to confirm and save.
+
+
+Overview
+
+Employee Code - Select code of employee from the predefined list, for whom the Leave Application is created, it is a mandatory field. This list gets loaded by pressing space bar on the field or by entering the employee code in the field. The values in this list are loaded from HRMS>>Transaction>>Employee. Once the Employee Code is selected, the corresponding Employee Name, Designation, Leave Policy Code, Leave Policy Name, Join Date, RP Number etc., details appears in the respective fields
+Employee Name - Select employee name from the predefined list, for whom the Leave Application is created, it is a mandatory field. This list gets loaded by pressing space bar on the field or by entering the employee code in the field. The values in this list are loaded from HRMS>>Transaction>>Employee. Once the Employee Name is selected, the corresponding Employee Code, Designation, Leave Policy Code, Leave Policy Name, Join Date, RP Number etc., details appears in the respective fields.
+Designation - Auto-filled on selection of Employee Code
+Refer Number - Auto generated number.
+Leave Policy Code - Auto -filled on Selection of Employee Code
+Leave Policy Name - Auto-filled on selection of Employee Code
+RP Number - Auto-filled on selection of Employee Code
+RP Expiry Date - Auto-filled on selection of Employee Code
+Join Date - Auto-filled on selection of Employee Code
+Request Date - By default current date gets selected, user can choose date from calendar form available. It is a mandatory field
+Travel Date - By default current date gets selected, user can choose the required date from calendar form available.
+Contact Number - Enter the Contact number of the Employee.
+Attach - Click the Attach button to upload the supporting documents.
+Leave Details
+Leave Type - The user can select the leave type from the different leave types applicable to employee, available in drop-down list. The values in this list are loaded from HRMS>>Masters>>Leave Type.
+Leave Policy Days - Days allotted to the selected leave type
+Accrued Days - Total number of days which is available for the employee
+Air Ticket Eligibility % - The percentage of leave which are eligible for air ticket
+Leave Period
+From Date - User can choose date from calendar form available. It is a mandatory field.
+To Date - User can choose date from calendar form available. It is a mandatory field.
+Leave Days - Based upon the selection of From Date and To Date fields, Leave Days field is defaulted
+Paid From - Based upon the selection of From Date field, Paid from field is defaulted.
+Paid To - Based upon the selection of To Date field, Paid To field is defaulted.
+Paid Days - Based upon the selection of Paid From and Paid To fields, Paid Days field is defaulted
+Unpaid From - Based upon the Leave Details, the user can enter the Unpaid from date as required.
+Unpaid To - Based upon the Leave Details, the user can enter the Unpaid to date as required
+Unpaid Days - Based upon the selection of Unpaid From and Unpaid To fields, Unpaid Days field is defaulted.
+Paid Weekends - Based upon the selection of From Date and To Date fields the weekends that are occurring in between that dates shall be auto defaulted.
+Paid Holidays - Based upon the selection of From Date and To Date fields the holidays that are occurring in between that dates shall be auto defaulted.
+Actual Paid Days - Based upon the selection of From Date and To Date fields the Actual Paid working days shall be auto defaulted.
+Balance Paid Days - Based upon the selection of From Date, To Date, Eligible Days the Balance Paid days shall be auto defaulted.
+Job Code - The code of the job which the employee has been working on while he/she has applied for leave
+Job Description - The name of the job which the employee has been working on while he/she has applied for leave
+Contact Address: Enter the address of the employee if required.
+Notes - Enter notes if required
+Previous Leave Details
+The Previous Leave Details of that particular employee also shall be displayed under the Previous Leave Details section
