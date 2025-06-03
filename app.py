@@ -16,11 +16,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 logger.info("Starting Streamlit ERP Leave Application Chatbot...")
 
-# -------- CONFIGURATION (Credentials Hard-Coded) --------
-import streamlit as st
-import openai
-
-OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]  # ← NO comma!
+# -------- CONFIGURATION (Credentials via secrets) --------
+OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
 openai.api_key = OPENAI_API_KEY
 client = openai.OpenAI(api_key=OPENAI_API_KEY)
 ERP_BEARER_TOKEN = ""
