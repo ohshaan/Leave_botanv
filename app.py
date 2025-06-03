@@ -1088,6 +1088,55 @@ if any(kw in lower for kw in visa_type_keywords):
     with st.chat_message("assistant"):
         st.markdown(reply)
     st.stop()
+# --- Cancel or Reschedule Leave Block ---
+cancel_keywords = [
+    "cancel my leave", "can i cancel my leave", "withdraw my leave", "can i withdraw my leave",
+    "cancel approved leave", "withdraw approved leave", "can i cancel approved leave",
+    "can i withdraw approved leave", "can i cancel my approved leave",
+    "can i reschedule my leave", "reschedule my leave", "can i change my leave dates",
+    "modify my leave", "change leave dates", "edit leave application"
+]
+if any(kw in lower for kw in cancel_keywords):
+    # Check if the user refers to a specific leave (by ref) or just the latest approved
+    ref_match = re.search(r"(lp|ref)[^\d]*(\d{3,})", lower)
+    leave = None
+    if ref_match:
+        ref_partial = ref_match.group(2)
+        leave = get_leave_by_ref(leave_history, ref_partial)
+    else:
+        # Default: latest approved leave
+        approved_leaves = get_approved_leaves(leave_history)
+        leave = max(approved_leaves, key=lambda x: x.get("LeaveGrid_Ela_FromDate_D", ""), default=None)
+    
+    if not leave:
+        reply = "No approved leave application found to cancel or reschedule."
+    else:
+        editable = str(leave.get("Editable", "0"))
+        ref = leave.get("LeaveGrid_Ela_RefferNo_V", "N/A")
+        ltype = leave.get("LeaveGrid_Lvm_Description_V", "N/A")
+        from_d = leave.get("LeaveGrid_Ela_FromDate_D", "").split("T")[0]
+        to_d = leave.get("LeaveGrid_Ela_ToDate_D", "").split("T")[0]
+        status = leave.get("LeaveGrid_Status", "N/A")
+        if editable == "1" and status.lower() == "approved":
+            reply = (
+                f"Yes, you can cancel or reschedule your approved leave (Ref {ref}: {ltype}, {from_d} to {to_d}).\n"
+                "Please use the ERP self-service portal to cancel or request a change for this leave application."
+            )
+        else:
+            reason = []
+            if editable != "1":
+                reason.append("it is locked for editing")
+            if status.lower() != "approved":
+                reason.append(f"status is '{status}'")
+            reply = (
+                f"No, you cannot cancel or reschedule your leave (Ref {ref}: {ltype}, {from_d} to {to_d}) "
+                f"because {' and '.join(reason)}. "
+                "Contact HR if you believe this is incorrect."
+            )
+    st.session_state["messages"].append({"role": "assistant", "content": reply})
+    with st.chat_message("assistant"):
+        st.markdown(reply)
+    st.stop()
 
 
 # ----------- DEFAULT: ALWAYS FALL BACK TO LLM WITH ALL DATA -----------
