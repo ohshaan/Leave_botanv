@@ -242,6 +242,23 @@ functions = [
                 "required": ["emp_id"]
             }
         }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_leave_summary",
+            "description": "Fetch leave summary for an employee between two dates",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "emp_id": {"type": "string", "description": "Employee ID"},
+                    "leave_type_id": {"type": "string", "description": "Leave type ID"},
+                    "from_date": {"type": "string", "description": "Start date (YYYY-MM-DD)"},
+                    "to_date": {"type": "string", "description": "End date (YYYY-MM-DD)"}
+                },
+                "required": ["emp_id", "leave_type_id", "from_date", "to_date"]
+            }
+        }
     }
 ]
 
@@ -254,6 +271,13 @@ def handle_function_call(call):
         return get_leave_types_cached(args.get("emp_id", ""))
     if name == "get_leave_applications":
         return get_leave_applications_cached(args.get("emp_id", ""))
+    if name == "get_leave_summary":
+        return get_leave_summary_cached(
+            args.get("emp_id", ""),
+            args.get("leave_type_id", ""),
+            args.get("from_date", ""),
+            args.get("to_date", "")
+        )
     return {"error": "Unknown function."}
 
 # ======== STREAMLIT UI & MAIN LOGIC ========
