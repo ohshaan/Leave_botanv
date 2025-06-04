@@ -29,6 +29,13 @@ HISTORY_API_URL = "http://117.247.187.131:8085/api/LeaveApplicationApi/HrmGetLea
 # -------- LOAD HELP TEXT --------
 @st.cache_data
 def load_help_doc():
+    """Load the local help document used for answering policy questions.
+
+    The function reads ``leave_help.txt`` from disk and returns its
+    contents. When the file does not exist a short message is returned
+    instead. ``st.cache_data`` is used so the file is only read once per
+    session.
+    """
     try:
         with open("leave_help.txt", "r", encoding="utf-8") as f:
             text = f.read()
@@ -43,6 +50,13 @@ help_doc = load_help_doc()
 # -------- ERP API CALLS (all cached per emp) --------
 @st.cache_data(ttl=300)
 def get_employee_details_cached(emp_id):
+    """Retrieve employee details from the ERP API.
+
+    The response is cached for five minutes. If the call succeeds and
+    returns a list, the first item is assumed to contain the profile
+    information. On failure an ``{"error": ...}`` dictionary is
+    returned.
+    """
     url = f"{EMP_API_URL}?strEmp_ID_N={emp_id}"
     headers = {
         "Authorization": f"Bearer {ERP_BEARER_TOKEN}",
@@ -61,6 +75,7 @@ def get_employee_details_cached(emp_id):
 
 @st.cache_data(ttl=300)
 def get_leave_types_cached(emp_id):
+    """Return the list of leave types available to the employee."""
     # The API only expects Emp_ID_N and Cgm_ID_N parameters. An empty
     # key "{}" was previously sent which resulted in malformed query
     # strings and failed requests. Remove the stray parameter so the
@@ -79,6 +94,7 @@ def get_leave_types_cached(emp_id):
 
 @st.cache_data(ttl=300)
 def get_leave_applications_cached(emp_id):
+    """Fetch all leave applications for the employee except cancelled ones."""
     str_filter = f"A.Emp_ID_N={emp_id} AND A.Ela_Status_N NOT IN (0,6) ORDER BY Ela_RefferNo_V"
     headers = {
         "Authorization": f"Bearer {ERP_BEARER_TOKEN}",
@@ -97,7 +113,10 @@ def get_leave_applications_cached(emp_id):
 
 @st.cache_data(ttl=180)
 def get_leave_summary_cached(emp_id, leave_type_id, from_date, to_date):
+    """Return a leave balance summary for a specific leave type."""
+
     def to_str_date(d):
+        """Convert a ``YYYY-MM-DD`` string to ``DD-MMM-YYYY`` if possible."""
         if isinstance(d, str):
             try:
                 dt = datetime.strptime(d, "%Y-%m-%d")
@@ -122,6 +141,7 @@ def get_leave_summary_cached(emp_id, leave_type_id, from_date, to_date):
 
 # ===== Helper Functions for Leave History & Formatting =====
 def get_leaves_by_year(leave_history, year=None):
+    """Return all leave records from ``leave_history`` matching ``year``."""
     year = year or datetime.now().year
     results = []
     for lh in leave_history:
@@ -137,6 +157,7 @@ def get_leaves_by_year(leave_history, year=None):
     return results
 
 def get_leaves_by_month(leave_history, month=None, year=None):
+    """Filter ``leave_history`` by the given month and year."""
     now = datetime.now()
     month = month or now.month
     year = year or now.year
@@ -154,6 +175,7 @@ def get_leaves_by_month(leave_history, month=None, year=None):
     return results
 
 def format_leave_list(leaves):
+    """Convert a list of leave dictionaries into a markdown bullet list."""
     if not leaves:
         return "No leave applications found for this period."
     lines = []
@@ -168,12 +190,14 @@ def format_leave_list(leaves):
     return "\n".join(lines)
 
 def get_leave_by_ref(leave_history, ref_partial):
+    """Return the leave record whose reference number contains ``ref_partial``."""
     for lh in leave_history:
         if ref_partial in str(lh.get("LeaveGrid_Ela_RefferNo_V", "")):
             return lh
     return None
 
 def get_approved_leaves(leave_history, year=None):
+    """Get all approved leaves, optionally filtered by ``year``."""
     results = []
     for lh in leave_history:
         status = lh.get("LeaveGrid_Status", "").strip().lower()
@@ -192,6 +216,7 @@ def get_approved_leaves(leave_history, year=None):
 
 # --- FUZZY MATCH UTILITY ---
 def fuzzy_match(user_input, keywords, threshold=85):
+    """Return ``True`` if ``user_input`` matches any keyword above the threshold."""
     for kw in keywords:
         if fuzz.partial_ratio(user_input, kw) >= threshold:
             return True
@@ -263,6 +288,7 @@ functions = [
 ]
 
 def handle_function_call(call):
+    """Dispatch an OpenAI function call to the appropriate helper."""
     name = call.name
     args = call.arguments if not isinstance(call.arguments, str) else json.loads(call.arguments)
     if name == "get_employee_details":
@@ -975,6 +1001,7 @@ if fuzzy_match(lower, leave_policy_keywords, threshold=80):
         leave_summaries_list = leave_summaries
 
     def format_leave_policy(policy_name, leave_types, leave_summaries):
+        """Format a table summarising the employee's leave policy."""
         summaries_by_atm = {}
         for s in leave_summaries:
             if "Atm_TypeID_N" in s:
