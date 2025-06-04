@@ -61,7 +61,11 @@ def get_employee_details_cached(emp_id):
 
 @st.cache_data(ttl=300)
 def get_leave_types_cached(emp_id):
-    params = {"Emp_ID_N": emp_id, "Cgm_ID_N": 1, "{}": ""}
+    # The API only expects Emp_ID_N and Cgm_ID_N parameters. An empty
+    # key "{}" was previously sent which resulted in malformed query
+    # strings and failed requests. Remove the stray parameter so the
+    # request is properly formatted.
+    params = {"Emp_ID_N": emp_id, "Cgm_ID_N": 1}
     headers = {"Authorization": f"Bearer {ERP_BEARER_TOKEN}", "Accept": "application/json"}
     try:
         resp = requests.get(FILL_LEAVE_TYPE_URL, headers=headers, params=params, timeout=10)
