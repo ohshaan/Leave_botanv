@@ -198,7 +198,6 @@ def fuzzy_match(user_input, keywords, threshold=85):
     return False
 
 # -------- OPENAI SETUP --------
-openai.api_key = OPENAI_API_KEY
 client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
 functions = [
