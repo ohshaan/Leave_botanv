@@ -61,7 +61,7 @@ def get_employee_details_cached(emp_id):
 
 @st.cache_data(ttl=300)
 def get_leave_types_cached(emp_id):
-    params = {"Emp_ID_N": emp_id, "Cgm_ID_N": 1, "{}": ""}
+    params = {"Emp_ID_N": emp_id, "Cgm_ID_N": 1}
     headers = {"Authorization": f"Bearer {ERP_BEARER_TOKEN}", "Accept": "application/json"}
     try:
         resp = requests.get(FILL_LEAVE_TYPE_URL, headers=headers, params=params, timeout=10)
@@ -1115,11 +1115,7 @@ if getattr(msg, "function_call", None):
 
     followup = client.chat.completions.create(
         model="gpt-3.5-turbo",
-        messages=st.session_state["messages"] + [{
-            "role": "function",
-            "name": msg.function_call.name,
-            "content": result_str
-        }],
+        messages=st.session_state["messages"],
         tools=functions,
         tool_choice="auto"
     )
